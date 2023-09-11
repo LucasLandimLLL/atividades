@@ -1,66 +1,86 @@
-import { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import imagemBiscoitoFechado from './assets/biscoito-fechado.png';
-import imagemBiscoitoAberto from './assets/biscoito-aberto.png';
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+
+let timer = null;
+let ss = 0;
+let mm = 0;
+let hh = 0;
+
 export default function App() {
+  const [numero, setNumero] = useState("00:00:00");
+  const [botao, setBotao] = useState("Iniciar");
+  const [ultimo, setUltimo] = useState(null);
 
-  const [quebrarBiscoito, setQuebrarBiscoito] = useState(false) 
-  const [mensagem, setMensagem] = useState('') 
+  function iniciar() {
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+      setBotao("Continuar");
+    } else {
+      timer = setInterval(() => {
+        ss++;
 
-  const frases = [
-    "O Corinthians: acredite, a vitória está ao alcance de todos.",
-    "São Paulo FC: a união é a chave do sucesso, vá em frente!",
-    "Palmeiras: com determinação, você alcançará seus objetivos.",
-    "Flamengo: o fogo da paixão levará você à glória.",
-    "Grêmio: confie na tradição, ela guiará seu caminho.",
-    "Internacional: a perseverança é o segredo da conquista.",
-    "Cruzeiro: siga sua estrela, ela iluminará seu destino.",
-    "Vasco da Gama: navegue com coragem, o sucesso o espera.",
-    "Atlético Mineiro: a força da massa o levará longe.",
-    "Botafogo: a estrela solitária brilha sobre seus sonhos.",
-    "Fluminense: juntos, somos imparáveis, acredite!",
-    "Santos FC: a paixão pelo jogo é sua maior arma.",
-    "Athletico Paranaense: a garra é o que nos faz vencer.",
-    "Bahia: com fé e dedicação, tudo é possível.",
-    "Sport Recife: a determinação supera qualquer desafio.",
-    "Fortaleza: a coragem te levará ao topo, siga em frente.",
-    "Goiás: a perseverança é a chave para o sucesso duradouro.",
-    "Ceará: a união do time é a força que você precisa.",
-    "Coritiba: confie em si mesmo, você é capaz de grandes feitos.",
-    "Vitória: o esforço leva à vitória, nunca desista!",
-  ];
-  
-  function mostrarMensagem() {
-    setQuebrarBiscoito(true)
-    const indiceAleatorio = parseInt(Math.random() * frases.length)
-    setMensagem(frases[indiceAleatorio])
+        if (ss == 60) {
+          ss = 0;
+          mm++;
+        }
+
+        if (mm == 60) {
+          mm = 0;
+          hh++;
+        }
+
+        let format =
+          (hh < 10 ? "0" + hh : hh) +
+          ":" +
+          (mm < 10 ? "0" + mm : mm) +
+          ":" +
+          (ss < 10 ? "0" + ss : ss);
+
+        setNumero(format);
+      }, 100);
+
+      setBotao("Parar");
+    }
+  }
+
+  function zerar() {
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+      setBotao("Iniciar");
+      setUltimo("");
+      setNumero("00:00:00");
+      ss = 0;
+      mm = 0;
+      hh = 0;
+    } else {
+      setUltimo(numero);
+      setNumero("00:00:00");
+      ss = 0;
+      mm = 0;
+      hh = 0;
+      setBotao("Iniciar");
+    }
   }
 
   return (
     <View style={styles.container}>
-          <Image
-            style={styles.image}
-            source={quebrarBiscoito ? imagemBiscoitoAberto : imagemBiscoitoFechado}
-          />
-
-          <Text style={styles.texto}>
-            {
-              quebrarBiscoito ? mensagem : ''
-            }
-          </Text>
-
-          <TouchableOpacity 
-              style={styles.botao}
-              onPress={mostrarMensagem} 
-              disabled={quebrarBiscoito}
-              >
-            <Text style={styles.textoBotao}>Quebrar Biscoito</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.botao} onPress={() => setQuebrarBiscoito(false)}>
-            <Text style={styles.textoBotao}>Reiniciar Biscoito</Text>
-          </TouchableOpacity>
-
+      <Image source={require("./src/image/crono.png")} />
+      <Text style={styles.timer}>{numero}</Text>
+      <View style={styles.btnArea}>
+        <TouchableOpacity style={styles.btnButton} onPress={iniciar}>
+          <Text style={styles.btnText}>{botao}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnButton} onPress={zerar}>
+          <Text style={styles.btnText}>Zerar</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.areaUtimo}>
+        <Text style={styles.textCorrida}>
+          {ultimo ? "Ultimo tempo: " + ultimo : " "}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -68,43 +88,41 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "red",
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-  image: {
-    width: 400,
-    height: 300,
-    marginBottom: 60,
-    
-  },
-
-  botao: {
-    backgroundColor: "black",
-    borderRadius: 100,
-    paddingTop: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    width: 180,
-    marginBottom: 20
-  },
-
-  textoBotao: {
-    fontSize: 18,
-    color: "#fff",
+  timer: {
+    marginTop: -160,
+    fontSize: 40,
     fontWeight: "bold",
-    alignSelf: "center",
-    color : "red" 
+    color: "#fff",
   },
-
-  texto: {
+  btnArea: {
+    flexDirection: "row",
+    marginTop: 130,
+    height: 40,
+  },
+  btnButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 40,
+    margin: 17,
+    backgroundColor: "#fff",
+    borderRadius: 9,
+  },
+  btnText: {
     fontSize: 20,
-    color: 'red',
-    marginBottom: 50,
-    fontWeight: 'bold',
-    backgroundColor: 'white',
-    paddingRight: 20,
-    paddingLeft: 20
-  }
+    fontWeight: "bold",
+    color: "black",
+  },
+  areaUtimo: {
+    marginTop: 45,
+  },
+  textCorrida: {
+    fontSize: 20,
+    color: "#fff",
+    fontStyle: "italic",
+  },
 });
