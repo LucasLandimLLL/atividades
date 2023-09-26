@@ -14,9 +14,9 @@ const App = () => {
         initialRouteName="UsersList"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#9c11a2', // Defina a cor desejada aqui
+            backgroundColor: '#9c11a2',
           },
-          headerTintColor: 'white', // Defina a cor do texto do header
+          headerTintColor: 'white',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
