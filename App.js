@@ -1,10 +1,33 @@
-import { PaperProvider } from "react-native-paper";
-import Router from "./src/routes/Router";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import UsersListScreen from './src/screens/UsersListScreen';
+import UserDetailsScreen from './src/screens/UserDetailsScreen';
+import UserPostsScreen from './src/screens/UserPostsScreen';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <PaperProvider>
-      <Router />
-    </PaperProvider>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="UsersList"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#9c11a2', // Defina a cor desejada aqui
+          },
+          headerTintColor: 'white', // Defina a cor do texto do header
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      >
+        <Stack.Screen name="Lista de Usuários" component={UsersListScreen} options={{ title: 'Lista de Usuários'}}  />
+        <Stack.Screen name="UserDetails" component={UserDetailsScreen} options={{ title: 'Detalhe de Usuário'}} />
+        <Stack.Screen name="UserPostsScreen" component={UserPostsScreen} options={{ title: 'Posts do Usuário'}} /> 
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+
+export default App;
